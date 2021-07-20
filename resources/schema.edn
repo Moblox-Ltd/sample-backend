@@ -1,0 +1,56 @@
+{:objects
+ {:Language
+  {:description "A programming language"
+   :fields
+   {:id {:type (non-null ID)}
+    :name {:type (non-null String)}
+    :summary {:type String
+              :description "A one-line summary of the language."}
+    :type_system {:type (non-null :TypeSystem)
+                  :description "The type system of the language"
+                  :resolve :Language/type_system}
+    :paradigms {:type (list :Paradigm)
+                :description "The paradigm used by the language"
+                :resolve :Language/paradigms}
+    :projects {:type (list :Project)
+               :resolve :Language/projects}}}
+  
+  :Paradigm
+  {:description "Type of language paradigm"
+   :fields
+   {:id {:type (non-null ID)}
+    :name {:type (non-null String)}
+    :languages {:type (list :Language)
+                :description "The languages that follow this paradigm"
+                :resolve :Paradigm/languages}}}
+  :Project
+  {:description "A project being handled"
+   :fields
+   {:id {:type (non-null ID)}
+    :name {:type (non-null String)}
+    :language {:type (non-null :Language)
+               :resolve :Project/languages}}}
+  
+  :TypeSystem
+  {:description "The type system used by languages"
+   :fields
+   {:id {:type (non-null ID)}
+    :name {:type (non-null String)}
+    :languages {:type (list :Language)
+                :description "The Languages with this type system"
+                :resolve :TypeSystem/languages}}}}
+
+ :queries
+ {:language_by_id
+  {:type :Language
+   :description "Access a Language by its unique id, if it exists."
+   :args
+   {:id {:type ID}}
+   :resolve :query/language-by-id}
+
+  :project_by_id
+  {:type :Project
+   :description "Access to a project by its unique id, if it exists."
+   :args
+   {:id {:type ID}}
+   :resolve :query/project-by-id}}}

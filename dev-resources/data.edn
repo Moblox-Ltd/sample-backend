@@ -1,0 +1,40 @@
+{:languages
+ [{:id "L1"
+   :name "Clojure"
+   :summary "A JVM based lisp"
+   :paradigms #{"100"}
+   :type_system "T1"}
+  {:id "L2"
+   :name "C#"
+   :summary "The .Net basic language"
+   :paradigms #{"101"}
+   :type_system "T2"}
+  {:id "L3"
+   :name "F#"
+   :summary "An ML language on .Net"
+   :paradigms #{"100" "101"}
+   :type_system "T3"}]
+
+ :paradigms
+ [{:id "100"
+   :name "Functional"}
+  {:id "101"
+   :name "Object Oriented"}
+  {:id "102"
+   :name "Imperative"}]
+
+ :projects
+ [{:id "P1"
+   :name "Moblox Project 1"
+   :language "L1"}
+  {:id "P2"
+   :name "Moblox Project 2"
+   :language "L3"}]
+ 
+ :types
+ [{:id "T1"
+   :name "Dynamic"}
+  {:id "T2"
+   :name "Static"}
+  {:id "T3"
+   :name "Hindley/Milner"}]}
