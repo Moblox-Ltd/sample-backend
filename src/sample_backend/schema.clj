@@ -4,7 +4,8 @@
    [com.walmartlabs.lacinia.util :as util]
    [com.walmartlabs.lacinia.schema :as schema]
    [com.stuartsierra.component :as component]
-   [clojure.edn :as edn]))
+   [clojure.edn :as edn]
+   [sample-backend.db :as db]))
 
 (defn resolve-element-by-id
   [element-map context args value]
@@ -37,23 +38,58 @@
           {}
           (get data k)))
 
+(defn language-by-id
+  [db]
+  (fn [_ args _]
+    (db/find-language-by-id db (:id args))))
+
+
+(defn language-paradigms
+  [db]
+  (fn [_ _ language]
+    (db/list-paradigms-for-language db (:id language))))
+
+(defn language-projects
+  [db]
+  (fn [_ _ language]
+    (db/list-projects-for-language db (:id language))))
+
+(defn language-type-system
+  [db]
+  (fn [_ _ language]
+    (db/list-type-system-for-language db (:id language))))
+
+(defn paradigm-languages
+  [db]
+  (fn [_ _ paradigm]
+    (db/list-languages-for-paradigm db (:id paradigm))))
+
+(defn type-system-languages
+  [db]
+  (fn [_ _ type-system]
+    (db/list-languages-for-type-system db (:id type-system))))
+
+(defn project-language
+  [db]
+  (fn [_ _ project]
+    (db/list-language-for-project db (:id project))))
+
+(defn project-by-id
+  [db]
+  (fn [_ args _]
+    (db/find-project-by-id db (:id args))))
+
 (defn resolver-map
   [component]
-  (let [data (-> (io/resource "data.edn")
-                 slurp
-                 edn/read-string)
-        languages-map (entity-map data :languages)
-        paradigms-map (entity-map data :paradigms)
-        projects-map (entity-map data :projects)
-        type-systems-map (entity-map data :types)]
-    {:query/language-by-id (partial resolve-element-by-id languages-map)
-     :query/project-by-id (partial resolve-element-by-id projects-map)
-     :Language/paradigms (partial resolve-language-to paradigms-map :paradigms)
-     :Language/type_system (partial resolve-language-to-single type-systems-map :type_system)
-     :Language/projects (partial resolve-language-to projects-map :projects)
-     :Paradigm/languages (partial resolve-to-languages languages-map :paradigms)
-     :Project/languages (partial resolve-to-languages languages-map :projects)
-     :TypeSystem/languages (partial resolve-to-languages languages-map :type_system)}))
+  (let [db (:db component)]
+    {:query/language-by-id (language-by-id db)
+     :query/project-by-id (project-by-id db)
+     :Language/paradigms (language-paradigms db)
+     :Language/type_system (language-type-system db)
+     :Language/projects (language-projects db)
+     :Paradigm/languages (paradigm-languages db)
+     :Project/languages (project-language db)
+     :TypeSystem/languages (type-system-languages db)}))
 
 (defn load-schema
   [component]
@@ -75,5 +111,7 @@
 
 (defn new-schema-provider
   []
-  {:schema-provider (map->SchemaProvider {})})
+  {:schema-provider (-> {}
+                        map->SchemaProvider
+                        (component/using [:db]))})
 
