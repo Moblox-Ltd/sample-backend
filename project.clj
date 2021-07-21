@@ -7,5 +7,7 @@
                  [com.walmartlabs/lacinia-pedestal "0.16.1"]
                  [com.stuartsierra/component "1.0.0"]
                  [io.aviso/logging "1.0"]]
-  ;; :repl-options {:init-ns sample-backend.core}
-  )
+  
+  :uberjar-name "sample-backend.jar"
+  :main sample-backend.core
+  :aot [sample-backend.core]  )

@@ -1,6 +1,18 @@
-(ns sample-backend.core)
+(ns sample-backend.core
+  (:require
+   [sample-backend.system :as system]
+   [com.stuartsierra.component :as component]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defonce system (system/new-system))
+
+
+(defn start
+  []
+  (alter-var-root #'system component/start-system)
+  :started)
+
+(defn -main
+  "The entry-point for 'lein run'"
+  [& args]
+  (println "\nCreating your server...")
+  (start))
