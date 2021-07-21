@@ -8,37 +8,6 @@
    [clojure.edn :as edn]
    [sample-backend.db :as db]))
 
-(defn resolve-element-by-id
-  [element-map context args value]
-  (let [{:keys [id]} args]
-    (get element-map id)))
-
-(defn resolve-language-to
-  [element-map key context args language]
-  (->> language
-       key
-       (map element-map)))
-
-(defn resolve-language-to-single
-  [element-map key context args language]
-  (->> language
-       key
-       element-map))
-
-(defn resolve-to-languages
-  [languages-map key context args value]
-  (let [{:keys [id]} value]
-    (->> languages-map
-         vals
-         (filter #(-> % key (contains? id))))))
-
-
-(defn entity-map
-  [data k]
-  (reduce #(assoc  %1 (:id %2) %2)
-          {}
-          (get data k)))
-
 (defn language-by-id
   [db]
   (fn [_ args _]
@@ -96,12 +65,30 @@
           (db/change-type-system-name db type-system-id name)
           (db/find-type-system-by-id db type-system-id))))))
 
+(defn add-language
+  [db]
+  (fn [_ args _]
+    (let [{name :name
+           summary :summary
+           type-system :type_system
+           paradigms :paradigms} args]
+      (cond
+        (nil? (db/find-type-system-by-id db type-system))
+        (resolve-as nil {:message "Type System not found"
+                         :status 404})
+
+        :else
+        (do
+          (db/add-language db name summary type-system paradigms)
+          (db/find-language-by-name db name))))))
+
 (defn resolver-map
   [component]
   (let [db (:db component)]
     {:query/language-by-id (language-by-id db)
      :query/project-by-id (project-by-id db)
      :mutation/change-type-system-name (change-type-system-name db)
+     :mutation/add-language (add-language db)
      :Language/paradigms (language-paradigms db)
      :Language/type_system (language-type-system db)
      :Language/projects (language-projects db)

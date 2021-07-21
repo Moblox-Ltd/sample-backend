@@ -56,7 +56,16 @@
    :resolve :query/project-by-id}}
 
  :mutations
- {:change_type_system_name
+ {:add_language
+  {:type :Language
+   :args
+   {:name {:type (non-null String)}
+    :summary {:type String}
+    :type_system {:type (non-null ID)}
+    :paradigms {:type (list ID)}}
+   :resolve :mutation/add-language}
+  
+  :change_type_system_name
   {:type :TypeSystem
    :args
    {:type_system_id {:type (non-null ID)}

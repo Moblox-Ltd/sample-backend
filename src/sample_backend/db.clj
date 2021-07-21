@@ -31,6 +31,15 @@
        (filter #(= language-id (:id %)))
        first))
 
+(defn find-language-by-name
+  [db language-name]
+  (->> db
+       :data
+       deref
+       :languages
+       (filter #(= language-name (:name %)))
+       first))
+
 (defn find-project-by-id
   [db project-id]
   (->> db
@@ -116,3 +125,18 @@
   (-> db
       :data
       (swap! update :types apply-type-system-name type-system-id new-name)))
+
+(defn ^:private apply-add-language
+  [languages name summary type-system paradigms]
+  (->> languages
+       (cons {:id (str "L" (+ 1 (count languages)))
+              :name name
+              :summary summary
+              :paradigms (set paradigms)
+              :type_system type-system})))
+
+(defn add-language
+  [db name summary type-system paradigms]
+  (-> db
+      :data
+      (swap! update :languages apply-add-language name summary type-system paradigms)))
