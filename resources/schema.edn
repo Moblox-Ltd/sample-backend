@@ -53,4 +53,12 @@
    :description "Access to a project by its unique id, if it exists."
    :args
    {:id {:type ID}}
-   :resolve :query/project-by-id}}}
+   :resolve :query/project-by-id}}
+
+ :mutations
+ {:change_type_system_name
+  {:type :TypeSystem
+   :args
+   {:type_system_id {:type (non-null ID)}
+    :name {:type (non-null String)}}
+   :resolve :mutation/change-type-system-name}}}

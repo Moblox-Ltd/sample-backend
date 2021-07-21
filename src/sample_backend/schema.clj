@@ -3,7 +3,8 @@
    [clojure.java.io :as io]
    [com.walmartlabs.lacinia.util :as util]
    [com.walmartlabs.lacinia.schema :as schema]
-   [com.stuartsierra.component :as component]
+   [com.walmartlabs.lacinia.resolve :refer [resolve-as]]
+   [com.stuartsierra.component :as component] 
    [clojure.edn :as edn]
    [sample-backend.db :as db]))
 
@@ -79,11 +80,28 @@
   (fn [_ args _]
     (db/find-project-by-id db (:id args))))
 
+(defn change-type-system-name
+  [db]
+  (fn [_ args _]
+    (let [{type-system-id :type_system_id
+           name :name} args
+          type-system (db/find-type-system-by-id db type-system-id)]
+      (cond
+        (nil? type-system)
+        (resolve-as nil {:message "Type System not found."
+                         :status 404})
+
+        :else
+        (do
+          (db/change-type-system-name db type-system-id name)
+          (db/find-type-system-by-id db type-system-id))))))
+
 (defn resolver-map
   [component]
   (let [db (:db component)]
     {:query/language-by-id (language-by-id db)
      :query/project-by-id (project-by-id db)
+     :mutation/change-type-system-name (change-type-system-name db)
      :Language/paradigms (language-paradigms db)
      :Language/type_system (language-type-system db)
      :Language/projects (language-projects db)

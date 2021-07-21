@@ -40,6 +40,14 @@
        (filter #(= project-id (:id %)))
        first))
 
+(defn find-type-system-by-id
+  [db type-system-id]
+  (->> db
+       :data
+       deref
+       :types
+       (filter #(= type-system-id (:id %)))
+       first))
 
 (defn list-type-system-for-language
   [db language-id]
@@ -94,3 +102,17 @@
        deref
        :languages
        (filter #(= type-system-id (:type_system %)))))
+
+
+(defn ^:private apply-type-system-name
+  [type-systems type-system-id new-name]
+  (->> type-systems
+       (remove #(= type-system-id (:id %)))
+       (cons {:id type-system-id
+              :name new-name})))
+
+(defn change-type-system-name
+  [db type-system-id new-name]
+  (-> db
+      :data
+      (swap! update :types apply-type-system-name type-system-id new-name)))
