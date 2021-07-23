@@ -13,6 +13,10 @@
   (fn [_ args _]
     (db/find-language-by-id db (:id args))))
 
+(defn all-languages
+  [db]
+  (fn [_ args _]
+    (db/all-languages db)))
 
 (defn language-paradigms
   [db]
@@ -85,7 +89,8 @@
 (defn resolver-map
   [component]
   (let [db (:db component)]
-    {:query/language-by-id (language-by-id db)
+    {:query/all-languages (all-languages db)
+     :query/language-by-id (language-by-id db)
      :query/project-by-id (project-by-id db)
      :mutation/change-type-system-name (change-type-system-name db)
      :mutation/add-language (add-language db)

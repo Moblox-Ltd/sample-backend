@@ -41,7 +41,11 @@
                 :resolve :TypeSystem/languages}}}}
 
  :queries
- {:language_by_id
+ {:all_languages
+  {:type (list :Language)
+   :resolve :query/all-languages}
+  
+  :language_by_id
   {:type :Language
    :description "Access a Language by its unique id, if it exists."
    :args

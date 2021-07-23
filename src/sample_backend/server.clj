@@ -11,6 +11,7 @@
     (assoc component :server (-> schema-provider
                                  :schema
                                  (lp/service-map {:graphiql true})
+                                 (merge {::http/allowed-origins {:allowed-origins (constantly true)}})
                                  http/create-server
                                  http/start)))
   (stop [component]

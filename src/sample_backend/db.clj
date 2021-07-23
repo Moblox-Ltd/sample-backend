@@ -22,6 +22,14 @@
   {:db (map->LanguagesDb {})})
 
 
+(defn all-languages
+  [db]
+  (->> db
+       :data
+       deref
+       :languages
+       ))
+
 (defn find-language-by-id
   [db language-id]
   (->> db
