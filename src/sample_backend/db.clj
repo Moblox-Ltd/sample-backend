@@ -27,8 +27,14 @@
   (->> db
        :data
        deref
-       :languages
-       ))
+       :languages))
+
+(defn all-projects
+  [db]
+  (->> db
+       :data
+       deref
+       :projects))
 
 (defn find-language-by-id
   [db language-id]

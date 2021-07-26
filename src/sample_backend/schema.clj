@@ -18,6 +18,11 @@
   (fn [_ args _]
     (db/all-languages db)))
 
+(defn all-projects
+  [db]
+  (fn [_ args _]
+    (db/all-projects db)))
+
 (defn language-paradigms
   [db]
   (fn [_ _ language]
@@ -90,6 +95,7 @@
   [component]
   (let [db (:db component)]
     {:query/all-languages (all-languages db)
+     :query/all-projects (all-projects db)
      :query/language-by-id (language-by-id db)
      :query/project-by-id (project-by-id db)
      :mutation/change-type-system-name (change-type-system-name db)

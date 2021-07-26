@@ -44,6 +44,10 @@
  {:all_languages
   {:type (list :Language)
    :resolve :query/all-languages}
+
+  :all_projects
+  {:type (list :Project)
+   :resolve :query/all-projects}
   
   :language_by_id
   {:type :Language
